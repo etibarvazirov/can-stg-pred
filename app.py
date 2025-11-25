@@ -10,7 +10,7 @@ from utils import preprocess_input
 # -----------------------------------------------------------
 # Load metadata from JSON
 # -----------------------------------------------------------
-with open("data/feature_info.json", "r") as f:
+with open("feature_info.json", "r") as f:
     INFO = json.load(f)
 
 FEATURES = INFO["features"]
@@ -39,7 +39,7 @@ hid_dim = 64
 out_dim = len(STAGE_LABELS)
 
 model = GraphSAGE(in_dim, hid_dim, out_dim)
-model.load_state_dict(torch.load("model/sage_model.pt", map_location="cpu"))
+model.load_state_dict(torch.load("sage_model.pt", map_location="cpu"))
 model.eval()
 
 # Dummy edge_index (prediction uses only node 0)
@@ -95,3 +95,4 @@ if st.button("🔮 Predict Stage"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov · Graph Neural Networks · Explainable AI")
+
