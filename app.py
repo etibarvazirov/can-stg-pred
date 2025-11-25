@@ -17,7 +17,7 @@ FEATURES = INFO["features"]
 STAGE_LABELS = INFO["stage_labels"]
 
 # -----------------------------------------------------------
-# Top 5 features from PFI (reduced input interface)
+# Top 5 most important clinical features
 # -----------------------------------------------------------
 TOP_FEATURES = [
     "T Stage",
@@ -27,8 +27,16 @@ TOP_FEATURES = [
     "Regional Node Examined"
 ]
 
+FEATURE_DESCRIPTIONS = {
+    "T Stage": "Şişin ilkin ölçüsü və toxumalara yayılma dərəcəsi.",
+    "Reginol Node Positive": "Bölgədə xərçəng hüceyrələri tapılan limfa düyünlərinin sayı.",
+    "Tumor Size": "Şişin real ölçüsü (mm). Böyük ölçü daha yüksək mərhələyə işarədir.",
+    "N Stage": "Şişin limfa düyünlərinə yayılma dərəcəsi.",
+    "Regional Node Examined": "Yoxlanılan limfa düyünlərinin ümumi sayı."
+}
+
 # -----------------------------------------------------------
-# GraphSAGE model definition
+# GraphSAGE model
 # -----------------------------------------------------------
 class GraphSAGE(nn.Module):
     def __init__(self, in_dim, hid_dim, out_dim):
@@ -37,113 +45,144 @@ class GraphSAGE(nn.Module):
         self.conv2 = SAGEConv(hid_dim, out_dim)
 
     def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index)
-        x = torch.relu(x)
+        x = torch.relu(self.conv1(x, edge_index))
         x = self.conv2(x, edge_index)
         return x
 
 # -----------------------------------------------------------
 # Load model
 # -----------------------------------------------------------
-in_dim = len(FEATURES)
-hid_dim = 64
-out_dim = len(STAGE_LABELS)
-
-model = GraphSAGE(in_dim, hid_dim, out_dim)
+model = GraphSAGE(len(FEATURES), 64, len(STAGE_LABELS))
 model.load_state_dict(torch.load("sage_model.pt", map_location="cpu"))
 model.eval()
 
 edge_index = torch.tensor([[0], [0]], dtype=torch.long)
 
 # -----------------------------------------------------------
-# STREAMLIT PAGE SETTINGS
+# Streamlit page config
 # -----------------------------------------------------------
-st.set_page_config(page_title="Cancer Stage Prediction", page_icon="🩺")
+st.set_page_config(page_title="Breast Cancer Stage Prediction", page_icon="🩺")
 
 # -----------------------------------------------------------
-# HEADER & INTRODUCTION
+# HEADER — Stylish Clinical Navbar
 # -----------------------------------------------------------
-st.title("🩺 Breast Cancer Stage Prediction (Graph Neural Network)")
+st.markdown(
+    """
+    <div style="
+        background: linear-gradient(90deg, #0d6efd, #228be6);
+        padding: 18px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 15px;">
+        <h1 style="color: white; margin: 0; font-size: 26px;">
+            🩺 Breast Cancer Stage Prediction (Graph Neural Network)
+        </h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# -----------------------------------------------------------
+# Introduction with friendly clinical style
+# -----------------------------------------------------------
 st.write("""
-Bu tətbiq döş xərçənginin klinik göstəricilərinə əsaslanaraq **IIA–IIIC mərhələlərini**
-təyin edən **GraphSAGE** təlimli modelindən istifadə edir.
+Bu tətbiq döş xərçənginin klinik məlumatlarına əsaslanaraq **IIA–IIIC** mərhələlərini
+proqnozlaşdıran **GraphSAGE** əsaslı süni intellekt modelidir.
 
-Sistem yalnız ən vacib 5 klinik parametrdən istifadə edir 
-(PFI — Permutation Feature Importance nəticələrinə əsasən):
+Model yalnız ən güclü təsir göstərən 5 klinik göstəricidən istifadə edir 
+(**Permutation Feature Importance** nəticəsinə əsaslanır):
 
-- **T Stage**
-- **Reginol Node Positive**
-- **Tumor Size**
-- **N Stage**
-- **Regional Node Examined**
-
-Bu göstəricilərin əsasında model mərhələni proqnozlaşdırır.
 """)
+
+for feat in TOP_FEATURES:
+    st.markdown(f"**• {feat}** — *{FEATURE_DESCRIPTIONS[feat]}*")
 
 st.markdown("---")
 
 # -----------------------------------------------------------
-# FORM INPUTS (DROP-DOWN + MANUAL)
+# INPUT FORM
 # -----------------------------------------------------------
-
-st.subheader("📥 Dəyərləri daxil edin")
+st.subheader("📥 Kliniki parametrləri daxil edin")
 
 input_data = {}
-
 col1, col2 = st.columns(2)
 
-# ▪▪▪ FEATURE: T Stage
+# -------------------------------
+# 1. T Stage (dropdown)
+# -------------------------------
 with col1:
-    t_options = ["T1", "T2", "T3", "T4"]
-    t_stage = st.selectbox("T Stage", t_options)
+    t_stage = st.selectbox(
+        "T Stage",
+        ["T1", "T2", "T3", "T4"],
+        help=FEATURE_DESCRIPTIONS["T Stage"]
+    )
     input_data["T Stage"] = t_stage
 
-# ▪▪▪ FEATURE: Reginol Node Positive
+# -------------------------------
+# 2. Reginol Node Positive
+# -------------------------------
 with col2:
-    rnp = st.number_input("Reginol Node Positive", min_value=0, max_value=30, step=1)
+    rnp = st.number_input(
+        "Reginol Node Positive",
+        0, 30, help=FEATURE_DESCRIPTIONS["Reginol Node Positive"]
+    )
     input_data["Reginol Node Positive"] = str(rnp)
 
-# ▪▪▪ FEATURE: Tumor Size
+# -------------------------------
+# 3. Tumor Size
+# -------------------------------
 with col1:
-    ts = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, step=1)
+    ts = st.number_input(
+        "Tumor Size (mm)",
+        1, 200,
+        help=FEATURE_DESCRIPTIONS["Tumor Size"]
+    )
     input_data["Tumor Size"] = str(ts)
 
-# ▪▪▪ FEATURE: N Stage
+# -------------------------------
+# 4. N Stage
+# -------------------------------
 with col2:
-    n_options = ["N1", "N2", "N3"]
-    n_stage = st.selectbox("N Stage", n_options)
+    n_stage = st.selectbox(
+        "N Stage",
+        ["N1", "N2", "N3"],
+        help=FEATURE_DESCRIPTIONS["N Stage"]
+    )
     input_data["N Stage"] = n_stage
 
-# ▪▪▪ FEATURE: Regional Node Examined
+# -------------------------------
+# 5. Regional Node Examined
+# -------------------------------
 with col1:
-    rne = st.number_input("Regional Node Examined", min_value=0, max_value=60, step=1)
+    rne = st.number_input(
+        "Regional Node Examined",
+        0, 60,
+        help=FEATURE_DESCRIPTIONS["Regional Node Examined"]
+    )
     input_data["Regional Node Examined"] = str(rne)
-
 
 st.markdown("---")
 
 # -----------------------------------------------------------
 # PREDICTION BUTTON
 # -----------------------------------------------------------
+if st.button("🔮 Proqnoz et"):
 
-if st.button("🔮 Predict Stage"):
-
-    # 1) Check if user filled inputs
     if any(v == "" for v in input_data.values()):
-        st.error("⚠️ Zəhmət olmasa bütün parametrləri daxil edin.")
+        st.error("⚠️ Zəhmət olmasa bütün zəruri sahələri doldurun.")
     else:
-        # 2) Fill missing features with zeros
+        # Expand to full 16 features
         full_input = {feat: "0" for feat in FEATURES}
         full_input.update(input_data)
 
-        # 3) Preprocess
+        # Preprocess
         x_arr = preprocess_input(full_input, FEATURES)
         x_tensor = torch.tensor(x_arr, dtype=torch.float).unsqueeze(0)
 
-        # 4) Run inference
+        # Predict
         with torch.no_grad():
             out = model(x_tensor, edge_index)
-            pred_idx = int(torch.argmax(out, dim=1).item())
+            pred_idx = int(out.argmax(dim=1).item())
 
         pred_stage = STAGE_LABELS[str(pred_idx)]
 
@@ -152,18 +191,22 @@ if st.button("🔮 Predict Stage"):
         st.markdown("---")
 
         # -----------------------------------------------------------
-        # ACCORDIONS: RESULTS, TABLES & XAI
+        # ACCORDIONS WITH EXPLANATION
         # -----------------------------------------------------------
         with st.expander("📊 Model Performance"):
+            st.write("Bu qrafik GraphSAGE və GAT modellərinin nəticələrini müqayisə edir.")
             st.image("images/model_comparison_sage_gat.png", width=550)
 
         with st.expander("📉 Confusion Matrix"):
+            st.write("Hər bir mərhələ üzrə modelin düzgün və yanlış təsnifatlarını göstərir.")
             st.image("images/confusion_matrix_sage.png", width=550)
 
         with st.expander("📄 Classification Report"):
+            st.write("Hər mərhələ üçün Precision, Recall və F1-score dəyərlərini göstərir.")
             st.image("images/classification_report_sage.png", width=550)
 
         with st.expander("🧠 Explainability (PFI — Global XAI)"):
+            st.write("Bu qrafik modelin qərarlarına ən çox təsir edən klinik göstəriciləri göstərir.")
             st.image("images/pfi_global_importance_sage.png", width=550)
 
 # -----------------------------------------------------------
