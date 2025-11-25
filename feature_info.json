@@ -1,0 +1,27 @@
+{
+    "features": [
+        "Age",
+        "Tumor Size",
+        "Survival Months",
+        "Reginol Node Positive",
+        "Regional Node Examined",
+        "Race",
+        "Marital Status",
+        "T Stage",
+        "N Stage",
+        "differentiate",
+        "Grade",
+        "A Stage",
+        "Estrogen Status",
+        "Progesterone Status",
+        "Status"
+    ],
+    
+    "stage_labels": {
+        "0": "IIA",
+        "1": "IIB",
+        "2": "IIIA",
+        "3": "IIIB",
+        "4": "IIIC"
+    }
+}
