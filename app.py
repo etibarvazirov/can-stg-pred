@@ -84,7 +84,7 @@ if st.button("🔮 Predict Stage"):
         st.subheader("📊 Model Explanation (Global XAI — PFI)")
         st.info("The chart below shows which features globally influenced the model the most.")
 
-        st.image("assets/pfi_global_importance_sage.png", width=550)
+        st.image("pfi_global_importance_sage.png", width=550)
 
     except Exception as e:
         st.error("⚠️ An error occurred during prediction.")
@@ -95,4 +95,5 @@ if st.button("🔮 Predict Stage"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov · Graph Neural Networks · Explainable AI")
+
 
