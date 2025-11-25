@@ -2,7 +2,7 @@ import numpy as np
 import json
 
 # Load metadata (feature order + stage labels)
-with open("data/feature_info.json", "r") as f:
+with open("feature_info.json", "r") as f:
     INFO = json.load(f)
 
 FEATURES = INFO["features"]
@@ -110,3 +110,4 @@ def preprocess_input(user_input: dict, feature_names: list):
                 x.append(0.0)
 
     return np.array(x, dtype=float)
+
