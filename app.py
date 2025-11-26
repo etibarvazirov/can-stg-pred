@@ -121,6 +121,11 @@ with col2:
 with col1:
     user_input["Race"] = st.selectbox("Race", ["White", "Black", "Other"])
 
+
+# CLEAN KEYS → prevent KeyError
+clean_input = {k.strip(): v for k, v in user_input.items()}
+user_input = clean_input
+
 st.markdown("---")
 
 
@@ -173,5 +178,6 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
