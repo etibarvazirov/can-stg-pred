@@ -128,7 +128,6 @@ user_input = clean_input
 
 st.markdown("---")
 
-st.write("ENCODER KEYS:", list(encoders.keys()))
 
 # -----------------------------------------------------------
 # PREDICTION
@@ -148,9 +147,6 @@ if st.button("🔮 Proqnoz et"):
         st.error(f"🔴 Yüksək Risk — **{prob:.2f}** (Aşağı sağ qalma ehtimalı)")
 
     st.write("---")
-
-    st.subheader("🧪 Model Input Vector (DEBUG)")
-    st.write(X)
 
 
 # -----------------------------------------------------------
@@ -179,6 +175,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
 
