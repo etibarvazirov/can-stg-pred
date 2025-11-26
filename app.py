@@ -158,8 +158,8 @@ with st.expander("📊 Confusion Matrix"):
 with st.expander("📈 ROC Curve"):
     st.image("images/xgb_roc_curve.png", width=520)
 
-with st.expander("📉 Calibration Curve"):
-    st.image("images/calibration_curve.png", width=520)
+# with st.expander("📉 Calibration Curve"):
+#     st.image("images/calibration_curve.png", width=520)
 
 with st.expander("🔥 Feature Importance (XGBoost)"):
     st.image("images/xgb_feature_importance_top10.png", width=520)
@@ -173,4 +173,5 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
