@@ -139,9 +139,9 @@ if st.button("🔮 Proqnoz et"):
     prob = model.predict_proba(X)[0][1]     # calibrated survival probability
 
     # RISK STRATIFICATION
-    if prob >= 0.87:
+    if prob >= 0.92:
         st.success(f"🟢 Aşağı Risk — **{prob:.2f}**")
-    elif prob >= 0.72:
+    elif prob >= 0.75:
         st.warning(f"🟡 Orta Risk — **{prob:.2f}**")
     else:
         st.error(f"🔴 Yüksək Risk — **{prob:.2f}**")
@@ -175,6 +175,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
 
