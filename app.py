@@ -153,6 +153,21 @@ with col1:
 st.markdown("---")
 
 # -----------------------------------------------------------
+# Default categorical values (used when user doesn't input them)
+# -----------------------------------------------------------
+DEFAULT_CATEGORICAL = {
+    "Race": "White",
+    "Marital Status": "Married",
+    "differentiate": "Moderately differentiated",
+    "Grade": "2",
+    "A Stage": "Regional",
+    "Estrogen Status": "Positive",
+    "Progesterone Status": "Positive",
+    "Status": "Alive"
+}
+
+
+# -----------------------------------------------------------
 # PREDICTION
 # -----------------------------------------------------------
 if st.button("🔮 Proqnoz et"):
@@ -211,6 +226,7 @@ with st.expander("🧠 Explainability (PFI — Global XAI)"):
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
+
 
 
 
