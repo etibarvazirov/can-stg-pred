@@ -1,40 +1,25 @@
 import numpy as np
 
-def preprocess_input(user_input, FEATURES, encoders, scaler, num_cols):
-    """
-    user_input: dict
-    FEATURES: full feature list (order matters)
-    encoders: categorical encoders dictionary
-    scaler: fitted StandardScaler
-    num_cols: numerical feature names
-    """
+def preprocess_input(user_input, encoders, scaler):
+    # categorical
+    t_val = encoders["T Stage"].transform([user_input["T Stage"]])[0]
+    n_val = encoders["N Stage"].transform([user_input["N Stage"]])[0]
 
-    row = []
+    # numeric
+    numeric_raw = np.array([
+        float(user_input["Tumor Size"]),
+        float(user_input["Reginol Node Positive"]),
+        float(user_input["Regional Node Examined"]),
+    ]).reshape(1, -1)
 
-    for feat in FEATURES:
-        value = user_input.get(feat, "0")
+    numeric_scaled = scaler.transform(numeric_raw)[0]
 
-        # Numeric columns
-        if feat in num_cols:
-            try:
-                row.append(float(value))
-            except:
-                row.append(0.0)
-
-        # Categorical columns
-        else:
-            encoder = encoders[feat]
-            try:
-                encoded = encoder.transform([value])[0]
-            except:
-                encoded = encoder.transform([encoder.classes_[0]])[0]
-            row.append(encoded)
-
-    row = np.array(row).reshape(1, -1)
-
-    # Scale numerical columns
-    row[:, [FEATURES.index(c) for c in num_cols]] = scaler.transform(
-        row[:, [FEATURES.index(c) for c in num_cols]]
-    )
+    row = np.array([
+        t_val,
+        n_val,
+        numeric_scaled[0],
+        numeric_scaled[1],
+        numeric_scaled[2]
+    ]).reshape(1, -1)
 
     return row
