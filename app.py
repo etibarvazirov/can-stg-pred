@@ -26,13 +26,13 @@ TOP_FEATURES = [
     "Regional Node Examined"
 ]
 
-# FEATURE_DESCRIPTIONS = {
-#     "T Stage": "Şişin ilkin ölçüsü və toxumalara yayılma dərəcəsi.",
-#     "Reginol Node Positive": "Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayı.",
-#     "Tumor Size": "Şişin faktiki ölçüsü (mm).",
-#     "N Stage": "Limfa düyünlərinə yayılma dərəcəsi.",
-#     "Regional Node Examined": "Yoxlanılan limfa düyünlərinin ümumi sayı."
-# }
+FEATURE_DESCRIPTIONS = {
+    "T Stage": "Şişin ilkin ölçüsü və toxumalara yayılma dərəcəsi.",
+    "Reginol Node Positive": "Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayı.",
+    "Tumor Size": "Şişin faktiki ölçüsü (mm).",
+    "N Stage": "Limfa düyünlərinə yayılma dərəcəsi.",
+    "Regional Node Examined": "Yoxlanılan limfa düyünlərinin ümumi sayı."
+}
 
 # -----------------------------------------------------------
 # GraphSAGE Model
@@ -89,27 +89,23 @@ st.markdown("""
     border-left:4px solid #66C2A5;
     font-size:16px;
 ">
-
-b>Döş xərçəngi mərhələsinin proqnozlaşdırılması</b> xəstənin klinik göstəricilərinə əsaslanan
+<b>Döş xərçəngi mərhələsinin proqnozlaşdırılması</b> xəstənin klinik göstəricilərinə əsaslanan
 AI sistemlərində mühüm addımdır. Bu tətbiq SEER məlumatlarından öyrədilmiş 
 <b>GraphSAGE</b> modelindən istifadə edərək xərçəngin <b>IIA–IIIC</b> mərhələləri üzrə proqnoz verir.
 
 Model, SEER məlumatlarında təqdim olunan “6th Stage” təsnifatına əsaslanaraq döş xərçənginin beş klinik mərhələsini — <b>IIA, IIB, IIIA, IIIB və IIIC</b> — proqnozlaşdırır. Bu mərhələlər xərçəngin erkən (IIA, IIB), orta (IIIA) və daha irəliləmiş (IIIB, IIIC) yayılma səviyyələrini əks etdirir.
 
 Bu sistem yalnız ən vacib klinik göstəricilərdən istifadə edir (Permutation Feature Importance nəticələrinə əsaslanır):
-
-Model yalnız ən vacib klinik göstəricilərdən istifadə edir:
 </div>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------
 # FEATURE DESCRIPTIONS — styled medical mini-cards
 # -----------------------------------------------------------
-
 st.markdown("<h4 style='margin-top:15px;'>📌 Ən vacib klinik göstəricilər</h4>", unsafe_allow_html=True)
 
 for feat in TOP_FEATURES:
-    # desc = FEATURE_DESCRIPTIONS[feat]
+    desc = FEATURE_DESCRIPTIONS[feat]
     st.markdown(
         f"""
         <div style="
@@ -120,12 +116,11 @@ for feat in TOP_FEATURES:
             border-left:4px solid #2ECC71;
         ">
             <b style="color:#0C513F; font-size:16px;">{feat}</b><br>
-            # <span style="color:#1B4332; font-size:14px;">{desc}</span>
+            <span style="color:#1B4332; font-size:14px;">{desc}</span>
         </div>
         """,
         unsafe_allow_html=True
     )
-
 
 st.markdown("---")
 
@@ -184,24 +179,23 @@ st.markdown("---")
 # ALWAYS VISIBLE ACCORDIONS
 # -----------------------------------------------------------
 with st.expander("📊 Model Performance"):
-    st.write("GraphSAGE və GAT modellərinin performansının müqayisəsi.")
+    st.write("GraphSAGE və GAT modellərinin performansının müqayisəsini göstərir.")
     st.image("images/model_comparison_sage_gat.png", width=550)
 
 with st.expander("📉 Confusion Matrix"):
-    st.write("Hər mərhələ üzrə düzgün və yanlış təsnifat dəyərləri.")
+    st.write("Hər mərhələ üzrə düzgün və yanlış təsnifatların paylanması.")
     st.image("images/confusion_matrix_sage.png", width=550)
 
 with st.expander("📄 Classification Report"):
-    st.write("Hər sinif üçün Precision, Recall və F1-score göstəriciləri.")
+    st.write("Hər sinif üçün Precision, Recall və F1-score nəticələrini göstərir.")
     st.image("images/classification_report_sage.png", width=550)
 
 with st.expander("🧠 Explainability (PFI — Global XAI)"):
-    st.write("Modelin qərarına ən çox təsir edən klinik göstəricilər.")
+    st.write("Modelin qərarlarına ən çox təsir edən klinik göstəricilər.")
     st.image("images/pfi_global_importance_sage.png", width=550)
 
 # -----------------------------------------------------------
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
-
 
