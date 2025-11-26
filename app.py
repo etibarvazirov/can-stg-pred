@@ -109,7 +109,7 @@ Model yalnız ən vacib klinik göstəricilərdən istifadə edir:
 st.markdown("<h4 style='margin-top:15px;'>📌 Ən vacib klinik göstəricilər</h4>", unsafe_allow_html=True)
 
 for feat in TOP_FEATURES:
-    desc = FEATURE_DESCRIPTIONS[feat]
+    # desc = FEATURE_DESCRIPTIONS[feat]
     st.markdown(
         f"""
         <div style="
@@ -120,7 +120,7 @@ for feat in TOP_FEATURES:
             border-left:4px solid #2ECC71;
         ">
             <b style="color:#0C513F; font-size:16px;">{feat}</b><br>
-            <span style="color:#1B4332; font-size:14px;">{desc}</span>
+            # <span style="color:#1B4332; font-size:14px;">{desc}</span>
         </div>
         """,
         unsafe_allow_html=True
@@ -203,4 +203,5 @@ with st.expander("🧠 Explainability (PFI — Global XAI)"):
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
+
 
