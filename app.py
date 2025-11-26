@@ -270,7 +270,7 @@ st.markdown("---")
 # -----------------------------------------------------------
 with st.expander("📊 XGB Metrics Table (Accuracy, Precision, Recall, F1, ROC-AUC)"):
     st.write("Modelin ümumi performans göstəriciləri aşağıdakı cədvəldə təqdim olunub:")
-    st.dataframe(results_df, use_container_width=True)
+    st.image("images/metrics_table.png", width=520)
 
 with st.expander("📊 Confusion Matrix"):
     st.image("images/xgb_confusion_matrix.png", width=520)
@@ -288,6 +288,7 @@ with st.expander("📉 ROC Curve"):
 
 st.markdown("---")
 st.caption("Developed by Toghrul & Harun · XGBoost · Explainable AI · 2025")
+
 
 
 
