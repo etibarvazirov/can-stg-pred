@@ -32,7 +32,7 @@ def preprocess_input(data, encoders, scaler):
 
     # Categorical columns
     cat_cols = [
-        "T Stage", "N Stage", "differentiate", "Grade",
+        "T Stage ", "N Stage", "differentiate", "Grade",
         "Estrogen Status", "Progesterone Status", "Race"
     ]
 
@@ -50,4 +50,5 @@ def preprocess_input(data, encoders, scaler):
     row[:, idxs] = scaler.transform(row[:, idxs])
 
     return row
+
 
