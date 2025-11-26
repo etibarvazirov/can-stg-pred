@@ -236,10 +236,14 @@ with st.expander("📊 Confusion Matrix"):
     st.image("images/xgb_confusion_matrix.png", width=520)
 
 with st.expander("📈 Feature Importance (Top 10)"):
-    st.image("images/xgb_feature_importance.png", width=520)
+    st.image("images/xgb_feature_importance_top10.png", width=520)
 
 with st.expander("🧠 SHAP Summary Plot"):
     st.image("images/xgb_shap_summary.png", width=520)
 
+# with st.expander("🧠 SHAP Summary Plot"):
+#     st.image("images/xgb_shap_summary.png", width=520)
+
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov · XGBoost · Explainable AI · 2025")
+
