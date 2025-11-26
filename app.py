@@ -26,13 +26,13 @@ TOP_FEATURES = [
     "Regional Node Examined"
 ]
 
-FEATURE_DESCRIPTIONS = {
-    "T Stage": "Şişin ilkin ölçüsü və toxumalara yayılma dərəcəsi.",
-    "Reginol Node Positive": "Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayı.",
-    "Tumor Size": "Şişin faktiki ölçüsü (mm).",
-    "N Stage": "Limfa düyünlərinə yayılma dərəcəsi.",
-    "Regional Node Examined": "Yoxlanılan limfa düyünlərinin ümumi sayı."
-}
+# FEATURE_DESCRIPTIONS = {
+#     "T Stage": "Şişin ilkin ölçüsü və toxumalara yayılma dərəcəsi.",
+#     "Reginol Node Positive": "Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayı.",
+#     "Tumor Size": "Şişin faktiki ölçüsü (mm).",
+#     "N Stage": "Limfa düyünlərinə yayılma dərəcəsi.",
+#     "Regional Node Examined": "Yoxlanılan limfa düyünlərinin ümumi sayı."
+# }
 
 # -----------------------------------------------------------
 # GraphSAGE Model
@@ -89,6 +89,7 @@ st.markdown("""
     border-left:4px solid #66C2A5;
     font-size:16px;
 ">
+
 b>Döş xərçəngi mərhələsinin proqnozlaşdırılması</b> xəstənin klinik göstəricilərinə əsaslanan
 AI sistemlərində mühüm addımdır. Bu tətbiq SEER məlumatlarından öyrədilmiş 
 <b>GraphSAGE</b> modelindən istifadə edərək xərçəngin <b>IIA–IIIC</b> mərhələləri üzrə proqnoz verir.
@@ -101,8 +102,30 @@ Model yalnız ən vacib klinik göstəricilərdən istifadə edir:
 </div>
 """, unsafe_allow_html=True)
 
+# -----------------------------------------------------------
+# FEATURE DESCRIPTIONS — styled medical mini-cards
+# -----------------------------------------------------------
+
+st.markdown("<h4 style='margin-top:15px;'>📌 Ən vacib klinik göstəricilər</h4>", unsafe_allow_html=True)
+
 for feat in TOP_FEATURES:
-    st.markdown(f"**• {feat}** — *{FEATURE_DESCRIPTIONS[feat]}*")
+    desc = FEATURE_DESCRIPTIONS[feat]
+    st.markdown(
+        f"""
+        <div style="
+            background-color:#E9F7EF;
+            padding:12px;
+            margin-bottom:8px;
+            border-radius:8px;
+            border-left:4px solid #2ECC71;
+        ">
+            <b style="color:#0C513F; font-size:16px;">{feat}</b><br>
+            <span style="color:#1B4332; font-size:14px;">{desc}</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 st.markdown("---")
 
@@ -180,3 +203,4 @@ with st.expander("🧠 Explainability (PFI — Global XAI)"):
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
+
