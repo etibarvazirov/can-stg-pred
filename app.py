@@ -160,8 +160,17 @@ if st.button("🔮 Proqnoz et"):
     if any(v == "" for v in input_data.values()):
         st.error("⚠️ Zəhmət olmasa bütün sahələri doldurun.")
     else:
-        full_input = {feat: "0" for feat in FEATURES}
-        full_input.update(input_data)
+        # 2) Create full feature dictionary
+        full_input = {}
+        
+        for feat in FEATURES:
+            if feat in input_data:
+                full_input[feat] = input_data[feat]
+            elif feat in DEFAULT_CATEGORICAL:
+                full_input[feat] = DEFAULT_CATEGORICAL[feat]
+            else:
+                full_input[feat] = "0"
+
 
         x = preprocess_input(full_input, FEATURES)
         x_tensor = torch.tensor(x, dtype=torch.float).unsqueeze(0)
@@ -202,5 +211,6 @@ with st.expander("🧠 Explainability (PFI — Global XAI)"):
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
+
 
 
