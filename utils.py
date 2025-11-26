@@ -35,19 +35,31 @@ ENCODERS = {
 }
 
 def preprocess_input(user_input, feature_names):
-    x = []
-    for feat in feature_names:
-        val = user_input.get(feat, "").strip()
 
-        # categorical
+    # Final feature array to send into the model
+    x = []
+
+    for feat in feature_names:
+
+        # If this feature was NOT provided in Streamlit → 0
+        if feat not in user_input:
+            x.append(0.0)
+            continue
+
+        val = user_input[feat]
+
+        # Categorical
         if feat in ENCODERS:
-            mapper = ENCODERS[feat]
-            x.append(float(mapper.get(val, 0)))  # fallback = 0
+            mapping = ENCODERS[feat]
+            x.append(float(mapping.get(val, 0)))
+
+        # Numeric
         else:
-            # numeric
             try:
                 x.append(float(val))
             except:
                 x.append(0.0)
 
     return np.array(x, dtype=float)
+
+
