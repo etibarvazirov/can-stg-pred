@@ -1,12 +1,12 @@
 import numpy as np
 import json
-import streamlit as st   # ⭐ streamlit import edirik
 
 with open("feature_info.json", "r") as f:
     INFO = json.load(f)
 
 FEATURES = INFO["features"]
 
+# Encoders defined correctly
 ENCODERS = {
     "T Stage": {"T1":0, "T2":1, "T3":2, "T4":3},
     "N Stage": {"N1":0, "N2":1, "N3":2},
@@ -27,26 +27,41 @@ ENCODERS = {
     "Status": {"Alive":0, "Dead":1}
 }
 
+# Default categorical values
+DEFAULT_CATEGORICAL = {
+    "Race": "White",
+    "Marital Status": "Married",
+    "differentiate": "Moderately differentiated",
+    "Grade": "2",
+    "A Stage": "Regional",
+    "Estrogen Status": "Positive",
+    "Progesterone Status": "Positive",
+    "Status": "Alive"
+}
+
 def preprocess_input(user_input, feature_names):
-    
-    # ⭐ STREAMLIT İÇİ DEBUG
-    st.write("### 🔍 DEBUG — USER INPUT KEYS:", list(user_input.keys()))
-    st.write("### 🔍 DEBUG — ENCODER KEYS:", list(ENCODERS.keys()))
 
     x = []
 
     for feat in feature_names:
 
-        val = user_input.get(feat, "").strip()
+        # If provided by Streamlit
+        if feat in user_input:
+            val = user_input[feat]
 
-        # categorical
+        # Else if categorical → use default
+        elif feat in DEFAULT_CATEGORICAL:
+            val = DEFAULT_CATEGORICAL[feat]
+
+        # Else numeric → fallback 0
+        else:
+            val = "0"
+
+        # Now encode properly
         if feat in ENCODERS:
             mapping = ENCODERS[feat]
-            st.write(f"DEBUG: Mapping {feat} = '{val}' → ", mapping.get(val, "**NOT FOUND**"))
             x.append(float(mapping.get(val, 0)))
-
         else:
-            # numeric
             try:
                 x.append(float(val))
             except:
