@@ -167,12 +167,21 @@ if st.button("🔮 Proqnoz et"):
     X = preprocess_input(user_input, encoders, scaler)
     prob = model.predict_proba(X)[0][1]
 
-    if prob >= 0.90:
-        st.success(f"🟢 Yüksək sağ qalma ehtimalı — **{prob:.2f}**")
-    elif prob >= 0.60:
-        st.warning(f"🟡 Orta sağ qalma ehtimalı — **{prob:.2f}**")
+    # if prob >= 0.90:
+    #     st.success(f"🟢 Yüksək sağ qalma ehtimalı — **{prob:.2f}**")
+    # elif prob >= 0.60:
+    #     st.warning(f"🟡 Orta sağ qalma ehtimalı — **{prob:.2f}**")
+    # else:
+    #     st.error(f"🔴 Aşağı sağ qalma ehtimalı — **{prob:.2f}**")
+
+    risk = 1 - prob   # ölüm riskini hesabla
+    
+    if risk >= 0.40:
+        st.error(f"🔴 Yüksək risk — **{risk:.2f}**")
+    elif risk >= 0.15:
+        st.warning(f"🟡 Orta risk — **{risk:.2f}**")
     else:
-        st.error(f"🔴 Aşağı sağ qalma ehtimalı — **{prob:.2f}**")
+        st.success(f"🟢 Aşağı risk — **{risk:.2f}**")
 
 
 st.markdown("---")
@@ -191,6 +200,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 
 st.markdown("---")
 st.caption("Developed by ________ · XGBoost · Explainable AI · 2025")
+
 
 
 
