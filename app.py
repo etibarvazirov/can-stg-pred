@@ -121,9 +121,10 @@ with st.expander("📈 ROC Curve"):
     st.write("ROC əyrisi modelin müxtəlif threshold-larda ayrıcılıq gücünü göstərir.")
 
 with st.expander("📉 Feature Importance"):
-    st.image("images/xgb_feature_importance.png", width=550)
+    st.image("images/xgb_feature_importance_top10.png", width=550)
     st.write("XGBoost modelinə ən çox təsir edən klinik göstəricilər.")
 
 st.markdown("---")
 
-st.caption("Developed by Etibar Vazirov · XGBoost · Explainable AI · 2025")
+st.caption("Developed by ... · XGBoost · Explainable AI · 2025")
+
