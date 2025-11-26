@@ -1,236 +1,126 @@
 import streamlit as st
-import torch
-import torch.nn as nn
-from torch_geometric.nn import SAGEConv
+import pickle
 import numpy as np
 import json
+
 from utils import preprocess_input
 
 # -----------------------------------------------------------
-# Load metadata
+# PAGE CONFIG
 # -----------------------------------------------------------
+st.set_page_config(page_title="Breast Cancer Survival Prediction", page_icon="🩺")
+
+# -----------------------------------------------------------
+# LOAD ARTIFACTS
+# -----------------------------------------------------------
+with open("model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+with open("scaler.pkl", "rb") as f:
+    scaler = pickle.load(f)
+
+with open("encoders.pkl", "rb") as f:
+    encoders = pickle.load(f)
+
 with open("feature_info.json", "r") as f:
     INFO = json.load(f)
 
 FEATURES = INFO["features"]
-STAGE_LABELS = INFO["stage_labels"]
+num_cols = INFO["num_cols"]
+cat_cols = INFO["cat_cols"]
+THRESHOLD = INFO["threshold"]   # Youden J optimal threshold
 
 # -----------------------------------------------------------
-# Top 5 most important features
-# -----------------------------------------------------------
-TOP_FEATURES = [
-    "T Stage",
-    "Reginol Node Positive",
-    "Tumor Size",
-    "N Stage",
-    "Regional Node Examined"
-]
-
-FEATURE_DESCRIPTIONS = {
-    "T Stage": "Şişin ilkin ölçüsü və toxumalara yayılma dərəcəsi.",
-    "Reginol Node Positive": "Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayı.",
-    "Tumor Size": "Şişin faktiki ölçüsü (mm).",
-    "N Stage": "Limfa düyünlərinə yayılma dərəcəsi.",
-    "Regional Node Examined": "Yoxlanılan limfa düyünlərinin ümumi sayı."
-}
-
-# -----------------------------------------------------------
-# GraphSAGE Model
-# -----------------------------------------------------------
-class GraphSAGE(nn.Module):
-    def __init__(self, in_dim, hid_dim, out_dim):
-        super().__init__()
-        self.conv1 = SAGEConv(in_dim, hid_dim)
-        self.conv2 = SAGEConv(hid_dim, out_dim)
-
-    def forward(self, x, edge_index):
-        x = torch.relu(self.conv1(x, edge_index))
-        x = self.conv2(x, edge_index)
-        return x
-
-# Load trained model
-model = GraphSAGE(len(FEATURES), 64, len(STAGE_LABELS))
-model.load_state_dict(torch.load("sage_model.pt", map_location="cpu"))
-model.eval()
-
-edge_index = torch.tensor([[0], [0]], dtype=torch.long)
-
-# -----------------------------------------------------------
-# Streamlit Config
-# -----------------------------------------------------------
-st.set_page_config(page_title="Cancer Stage Prediction", page_icon="🩺")
-
-# -----------------------------------------------------------
-# HEADER (Medical pastel design)
+# HEADER (Medical Style)
 # -----------------------------------------------------------
 st.markdown("""
     <div style="
-        background-color:#DFF5E3;
+        background-color:#D8F3DC;
         padding:18px;
         border-radius:10px;
         text-align:center;
-        border: 1px solid #B7E4C7;
-        margin-bottom: 15px;
-    ">
-        <h1 style="color:#0C513F; margin:0; font-size:26px;">
-            🩺 Breast Cancer Stage Prediction (Graph Neural Network)
+        border:1px solid #95D5B2;
+        margin-bottom:15px;">
+        <h1 style="color:#1B4332; margin:0;">
+            🩺 Breast Cancer 5-Year Survival Prediction
         </h1>
     </div>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------
-# DESCRIPTION (Medical INFO box)
+# DESCRIPTION
 # -----------------------------------------------------------
 st.markdown("""
-<div style="
-    background-color:#F2FBF5;
-    padding:15px;
-    border-radius:10px;
-    border-left:4px solid #66C2A5;
-    font-size:16px;
-">
-<b>Döş xərçəngi mərhələsinin proqnozlaşdırılması</b> xəstənin klinik göstəricilərinə əsaslanan
-AI sistemlərində mühüm addımdır. Bu tətbiq SEER məlumatlarından öyrədilmiş 
-<b>GraphSAGE</b> modelindən istifadə edərək xərçəngin <b>IIA–IIIC</b> mərhələləri üzrə proqnoz verir.
+Bu tətbiq döş xərçəngi xəstələri üçün **5 illik sağ qalma ehtimalını** təxmin edir.
+Model XGBoost əsasında hazırlanmışdır və SEER klinik məlumatları üzərində öyrədilmişdir.
 
-Model, SEER məlumatlarında təqdim olunan “6th Stage” təsnifatına əsaslanaraq döş xərçənginin beş klinik mərhələsini — <b>IIA, IIB, IIIA, IIIB və IIIC</b> — proqnozlaşdırır. Bu mərhələlər xərçəngin erkən (IIA, IIB), orta (IIIA) və daha irəliləmiş (IIIB, IIIC) yayılma səviyyələrini əks etdirir.
+Sistem aşağıdakı ən vacib klinik göstəricilərdən istifadə edir:
+- **Yaş (Age)**
+- **Şişin ölçüsü (Tumor Size)**
+- **Limfa düyünləri (N Stage)**
+- **Hormon statusu (Estrogen / Progesterone)**
+- **Histoloji dərəcə (Grade)**
 
-Bu sistem yalnız ən vacib klinik göstəricilərdən istifadə edir (Permutation Feature Importance nəticələrinə əsaslanır):
-</div>
-""", unsafe_allow_html=True)
-
-# -----------------------------------------------------------
-# FEATURE DESCRIPTIONS — styled medical mini-cards
-# -----------------------------------------------------------
-st.markdown("<h4 style='margin-top:15px;'>📌 Ən vacib klinik göstəricilər</h4>", unsafe_allow_html=True)
-
-for feat in TOP_FEATURES:
-    desc = FEATURE_DESCRIPTIONS[feat]
-    st.markdown(
-        f"""
-        <div style="
-            background-color:#E9F7EF;
-            padding:12px;
-            margin-bottom:8px;
-            border-radius:8px;
-            border-left:4px solid #2ECC71;
-        ">
-            <b style="color:#0C513F; font-size:16px;">{feat}</b><br>
-            <span style="color:#1B4332; font-size:14px;">{desc}</span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+Proqnoz:  
+**1 → Alive (yüksək sağ qalma ehtimalı)**  
+**0 → Dead (yüksək risk)**  
+""")
 
 st.markdown("---")
 
 # -----------------------------------------------------------
-# INPUT FORM
+# USER INPUTS
 # -----------------------------------------------------------
-st.subheader("📥 Kliniki parametrləri daxil edin")
+st.subheader("📥 Xəstə məlumatlarını daxil edin")
 
-input_data = {}
-col1, col2 = st.columns(2)
+user_input = {}
 
-with col1:
-    input_data["T Stage"] = st.selectbox("T Stage", ["T1", "T2", "T3", "T4"])
+for feat in FEATURES:
 
-with col2:
-    rnp = st.number_input("Reginol Node Positive", 0, 30)
-    input_data["Reginol Node Positive"] = str(rnp)
-
-with col1:
-    ts = st.number_input("Tumor Size (mm)", 1, 200)
-    input_data["Tumor Size"] = str(ts)
-
-with col2:
-    input_data["N Stage"] = st.selectbox("N Stage", ["N1", "N2", "N3"])
-
-with col1:
-    rne = st.number_input("Regional Node Examined", 0, 60)
-    input_data["Regional Node Examined"] = str(rne)
+    if feat in num_cols:
+        val = st.number_input(f"{feat}", value=0.0)
+        user_input[feat] = val
+    else:
+        options = list(encoders[feat].classes_)
+        val = st.selectbox(f"{feat}", options)
+        user_input[feat] = val
 
 st.markdown("---")
-
-# -----------------------------------------------------------
-# Default categorical values (used when user doesn't input them)
-# -----------------------------------------------------------
-DEFAULT_CATEGORICAL = {
-    "Race": "White",
-    "Marital Status": "Married",
-    "differentiate": "Moderately differentiated",
-    "Grade": "2",
-    "A Stage": "Regional",
-    "Estrogen Status": "Positive",
-    "Progesterone Status": "Positive",
-    "Status": "Alive"
-}
-
-st.write("### INPUT DATA CHECK =", input_data)
-
 
 # -----------------------------------------------------------
 # PREDICTION
 # -----------------------------------------------------------
 if st.button("🔮 Proqnoz et"):
 
-    if any(v == "" for v in input_data.values()):
-        st.error("⚠️ Zəhmət olmasa bütün sahələri doldurun.")
+    X = preprocess_input(user_input, FEATURES, encoders, scaler, num_cols)
+    prob_alive = model.predict_proba(X)[0][1]
+
+    pred = 1 if prob_alive >= THRESHOLD else 0
+
+    if pred == 1:
+        st.success(f"🌿 **Nəticə: Xəstənin sağ qalma ehtimalı yüksəkdir (Alive)**\n\nEhtimal: {prob_alive:.2f}")
     else:
-        # 2) Create full feature dictionary
-        full_input = {}
-        
-        for feat in FEATURES:
-            if feat in input_data:
-                full_input[feat] = input_data[feat]
-            elif feat in DEFAULT_CATEGORICAL:
-                full_input[feat] = DEFAULT_CATEGORICAL[feat]
-            else:
-                full_input[feat] = "0"
+        st.error(f"⚠️ **Nəticə: Yüksək risk (Dead)**\n\nSağ qalma ehtimalı: {prob_alive:.2f}")
 
+    st.markdown("---")
 
-        x = preprocess_input(full_input, FEATURES)
-        x_tensor = torch.tensor(x, dtype=torch.float).unsqueeze(0)
+    # -----------------------------------------------------------
+    # FIGURES
+    # -----------------------------------------------------------
+    with st.expander("📊 Model Accuracy Comparison"):
+        st.image("images/model_cv_accuracy.png")
 
-        with torch.no_grad():
-            out = model(x_tensor, edge_index)
-            pred_idx = int(out.argmax(dim=1).item())
+    with st.expander("📉 Confusion Matrix (Optimized)"):
+        st.image("images/xgb_confusion_matrix.png")
 
-        pred_stage = STAGE_LABELS[str(pred_idx)]
-        st.success(f"🎯 **Proqnozlaşdırılan mərhələ: {pred_stage}**")
+    with st.expander("📈 ROC Curve"):
+        st.image("images/xgb_roc_curve.png")
 
-        st.write("DEBUG — Modelə gedən feature vektoru:")
-        st.write(x_tensor)
+    with st.expander("🧠 Feature Importance (Top-10)"):
+        st.image("images/xgb_feature_importance_top10.png")
 
+    with st.expander("🧬 SHAP Summary Plot"):
+        st.image("images/xgb_shap_summary.png")
 
 st.markdown("---")
-
-# -----------------------------------------------------------
-# ALWAYS VISIBLE ACCORDIONS
-# -----------------------------------------------------------
-with st.expander("📊 Model Performance"):
-    st.write("GraphSAGE və GAT modellərinin performansının müqayisəsini göstərir.")
-    st.image("images/model_comparison_sage_gat.png", width=550)
-
-with st.expander("📉 Confusion Matrix"):
-    st.write("Hər mərhələ üzrə düzgün və yanlış təsnifatların paylanması.")
-    st.image("images/confusion_matrix_sage.png", width=550)
-
-with st.expander("📄 Classification Report"):
-    st.write("Hər sinif üçün Precision, Recall və F1-score nəticələrini göstərir.")
-    st.image("images/classification_report_sage.png", width=550)
-
-with st.expander("🧠 Explainability (PFI — Global XAI)"):
-    st.write("Modelin qərarlarına ən çox təsir edən klinik göstəricilər.")
-    st.image("images/pfi_global_importance_sage.png", width=550)
-
-# -----------------------------------------------------------
-# FOOTER
-# -----------------------------------------------------------
-st.markdown("---")
-
-
-
-
-
-
+st.caption("Developed by Etibar Vazirov · 2025 · Survival AI Model")
