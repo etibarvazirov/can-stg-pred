@@ -39,6 +39,10 @@ def preprocess_input(user_input, feature_names):
     # Final feature array to send into the model
     x = []
 
+    print("DEBUG: ENCODERS KEYS =", list(ENCODERS.keys()))
+    print("DEBUG: USER INPUT KEYS =", list(user_input.keys()))
+
+
     for feat in feature_names:
 
         # If this feature was NOT provided in Streamlit → 0
@@ -61,5 +65,6 @@ def preprocess_input(user_input, feature_names):
                 x.append(0.0)
 
     return np.array(x, dtype=float)
+
 
 
