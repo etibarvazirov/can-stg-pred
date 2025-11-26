@@ -220,7 +220,7 @@ if st.button("🔮 Proqnoz et"):
     prob = model.predict_proba(X)[0][1]   # survival probability
 
     # 3-LEVEL RISK SYSTEM
-    if prob >= 0.92:
+    if prob >= 0.87:
         st.success(f"🟢 Aşağı Risk — **{prob:.2f}** (Yüksək sağ qalma ehtimalı)")
     elif prob >= 0.75:
         st.warning(f"🟡 Orta Risk — **{prob:.2f}**")
@@ -246,5 +246,6 @@ with st.expander("🧠 SHAP Summary Plot"):
 
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov · XGBoost · Explainable AI · 2025")
+
 
 
