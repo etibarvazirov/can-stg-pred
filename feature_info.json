@@ -2,8 +2,7 @@
     "features": [
         "Age",
         "Tumor Size",
-        "Survival Months",
-        "Reginol Node Positive",
+        "Regional Node Positive",
         "Regional Node Examined",
         "Race",
         "Marital Status",
@@ -11,17 +10,24 @@
         "N Stage",
         "differentiate",
         "Grade",
-        "A Stage",
         "Estrogen Status",
-        "Progesterone Status",
-        "Status"
+        "Progesterone Status"
     ],
-    
-    "stage_labels": {
-        "0": "IIA",
-        "1": "IIB",
-        "2": "IIIA",
-        "3": "IIIB",
-        "4": "IIIC"
-    }
+    "num_cols": [
+        "Age",
+        "Tumor Size",
+        "Regional Node Positive",
+        "Regional Node Examined"
+    ],
+    "cat_cols": [
+        "Race",
+        "Marital Status",
+        "T Stage",
+        "N Stage",
+        "differentiate",
+        "Grade",
+        "Estrogen Status",
+        "Progesterone Status"
+    ],
+    "threshold": 0.37
 }
