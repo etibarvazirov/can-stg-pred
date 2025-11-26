@@ -4,7 +4,7 @@ import numpy as np
 FEATURES = [
     "Tumor Size",
     "Regional Node Positive",
-    "T Stage",
+    "T Stage ",
     "N Stage",
     "differentiate",
     "Grade",
@@ -50,3 +50,4 @@ def preprocess_input(data, encoders, scaler):
     row[:, idxs] = scaler.transform(row[:, idxs])
 
     return row
+
