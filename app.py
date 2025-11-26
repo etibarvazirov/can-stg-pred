@@ -173,6 +173,10 @@ if st.button("🔮 Proqnoz et"):
         pred_stage = STAGE_LABELS[str(pred_idx)]
         st.success(f"🎯 **Proqnozlaşdırılan mərhələ: {pred_stage}**")
 
+        st.write("DEBUG — Modelə gedən feature vektoru:")
+        st.write(x_tensor)
+
+
 st.markdown("---")
 
 # -----------------------------------------------------------
@@ -198,4 +202,5 @@ with st.expander("🧠 Explainability (PFI — Global XAI)"):
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
+
 
