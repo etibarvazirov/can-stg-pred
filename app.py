@@ -128,6 +128,7 @@ user_input = clean_input
 
 st.markdown("---")
 
+st.write("ENCODER KEYS:", list(encoders.keys()))
 
 # -----------------------------------------------------------
 # PREDICTION
@@ -178,6 +179,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
 
