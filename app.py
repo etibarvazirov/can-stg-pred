@@ -154,13 +154,14 @@ st.markdown("---")
 # ACCORDIONS (SHAP + Feature Importance)
 # -----------------------------------------------------------
 with st.expander("📊 XGBoost Feature Importance"):
-    st.image("images/xgb_feature_importance.png", width=600)
+    st.image("images/xgb_feature_importance_top10.png", width=600)
 
 with st.expander("🧠 SHAP Summary Plot"):
     st.image("images/xgb_shap_summary.png", width=600)
 
-with st.expander("🧬 SHAP Beeswarm Plot"):
-    st.image("images/xgb_shap_beeswarm.png", width=600)
+# with st.expander("🧬 SHAP Beeswarm Plot"):
+#     st.image("images/xgb_shap_beeswarm.png", width=600)
 
 st.markdown("---")
-st.caption("Developed by Etibar Vazirov · XGBoost · Explainable AI · 2025")
+st.caption("Developed by ________ · XGBoost · Explainable AI · 2025")
+
