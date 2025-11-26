@@ -1,7 +1,9 @@
 streamlit
-torch
-torch-geometric
+xgboost
+lightgbm
 numpy
 pandas
 scikit-learn
 matplotlib
+seaborn
+shap
