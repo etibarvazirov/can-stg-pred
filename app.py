@@ -166,9 +166,7 @@ DEFAULT_CATEGORICAL = {
     "Status": "Alive"
 }
 
-st.write("### DEBUG FEATURE COMPARE")
-st.write([repr(f) for f in FEATURES])
-st.write([repr(k) for k in input_data.keys()])
+st.write("### INPUT DATA CHECK =", input_data)
 
 
 # -----------------------------------------------------------
@@ -230,6 +228,7 @@ with st.expander("🧠 Explainability (PFI — Global XAI)"):
 # FOOTER
 # -----------------------------------------------------------
 st.markdown("---")
+
 
 
 
