@@ -124,7 +124,12 @@ with st.expander("📉 Feature Importance"):
     st.image("images/xgb_feature_importance_top10.png", width=550)
     st.write("XGBoost modelinə ən çox təsir edən klinik göstəricilər.")
 
+with st.expander("🧠 SHAP Summary Plot (Global Explainability)"):
+    st.image("images/xgb_shap_summary.png", width=550)
+    st.write("Bu SHAP qrafiki modelin ümumi qərarlarına ən çox təsir edən xüsusiyyətləri göstərir.")
+
 st.markdown("---")
 
 st.caption("Developed by ... · XGBoost · Explainable AI · 2025")
+
 
