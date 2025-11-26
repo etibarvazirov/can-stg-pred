@@ -1,6 +1,5 @@
 import numpy as np
 
-# 9 feature model
 FEATURES = [
     "Tumor Size",
     "Regional Node Positive",
@@ -17,39 +16,61 @@ FEATURES = [
 def preprocess_input(data, encoders, scaler):
     """
     Converts raw user input into model-ready numerical vector.
-    
-    Steps:
-    1. Numeric features -> float
-    2. Categorical features -> LabelEncoder transform
-    3. StandardScaler normalization for numeric features
-    4. Return numpy array shaped (1, 9)
+    Automatically aligns input keys with encoder keys (fixes spacing issues).
     """
 
+    # ---------------------------
+    # 1) AUTO-MAP FEATURE NAMES
+    # ---------------------------
+    encoder_keys = list(encoders.keys())
+    corrected = {}
+
+    for feat, val in data.items():
+        # try exact match
+        if feat in encoder_keys:
+            corrected[feat] = val
+            continue
+
+        # try match ignoring spaces
+        matched = None
+        for ek in encoder_keys:
+            if ek.strip().lower() == feat.strip().lower():
+                matched = ek
+                break
+
+        if matched:
+            corrected[matched] = val
+        else:
+            corrected[feat] = val   # numerical fields or non-encoded fields
+
+    data = corrected
+
+
+    # ---------------------------
+    # 2) BUILD FEATURE VECTOR
+    # ---------------------------
     row = []
 
-    # Numerical columns
     num_cols = ["Tumor Size", "Regional Node Positive"]
+    cat_cols = list(encoders.keys())
 
-    # Categorical columns
-    cat_cols = [
-        "T Stage", "N Stage", "differentiate", "Grade",
-        "Estrogen Status", "Progesterone Status", "Race"
-    ]
-
-    # Build row in correct order
     for feat in FEATURES:
         if feat in num_cols:
             row.append(float(data[feat]))
         else:
-            row.append(encoders[feat].transform([data[feat]])[0])
+            encoder_key = feat
+            # If encoder uses a different key (e.g., "T Stage "):
+            for ek in encoder_keys:
+                if ek.strip().lower() == feat.strip().lower():
+                    encoder_key = ek
+                    break
+
+            row.append(encoders[encoder_key].transform([data[encoder_key]])[0])
 
     row = np.array(row).reshape(1, -1)
 
-    # Scale numerical columns
+    # scale numericals
     idxs = [FEATURES.index(c) for c in num_cols]
     row[:, idxs] = scaler.transform(row[:, idxs])
 
     return row
-
-
-
