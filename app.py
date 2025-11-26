@@ -128,6 +128,48 @@ user_input = clean_input
 
 st.markdown("---")
 
+# Ready presets ----------------------------------------------
+
+st.subheader("📌 Hazır nümunələr (Test Presets)")
+
+colA, colB, colC = st.columns(3)
+
+if colA.button("🟢 Low Risk Preset"):
+    user_input["Tumor Size"] = 12
+    user_input["Reginol Node Positive"] = 0
+    user_input["T Stage"] = "T1"
+    user_input["N Stage"] = "N1"
+    user_input["differentiate"] = "Well differentiated"
+    user_input["Grade"] = "1"
+    user_input["Estrogen Status"] = "Positive"
+    user_input["Progesterone Status"] = "Positive"
+    user_input["Race"] = "White"
+    st.experimental_rerun()
+
+if colB.button("🟡 Medium Risk Preset"):
+    user_input["Tumor Size"] = 32
+    user_input["Reginol Node Positive"] = 3
+    user_input["T Stage"] = "T2"
+    user_input["N Stage"] = "N2"
+    user_input["differentiate"] = "Moderately differentiated"
+    user_input["Grade"] = "2"
+    user_input["Estrogen Status"] = "Positive"
+    user_input["Progesterone Status"] = "Negative"
+    user_input["Race"] = "Other"
+    st.experimental_rerun()
+
+if colC.button("🔴 High Risk Preset"):
+    user_input["Tumor Size"] = 78
+    user_input["Reginol Node Positive"] = 9
+    user_input["T Stage"] = "T3"
+    user_input["N Stage"] = "N3"
+    user_input["differentiate"] = "Poorly differentiated"
+    user_input["Grade"] = "3"
+    user_input["Estrogen Status"] = "Negative"
+    user_input["Progesterone Status"] = "Negative"
+    user_input["Race"] = "Black"
+    st.experimental_rerun()
+
 
 # -----------------------------------------------------------
 # PREDICTION
@@ -138,13 +180,14 @@ if st.button("🔮 Proqnoz et"):
 
     prob = model.predict_proba(X)[0][1]     # calibrated survival probability
 
-    # RISK STRATIFICATION
+    # RISK STRATIFICATION (3-level)
     if prob >= 0.92:
-        st.success(f"🟢 Aşağı Risk — **{prob:.2f}**")
+        st.success(f"🟢 Aşağı Risk — **{prob:.2f}** (Yüksək sağ qalma ehtimalı)")
     elif prob >= 0.75:
-        st.warning(f"🟡 Orta Risk — **{prob:.2f}**")
+        st.warning(f"🟡 Orta Risk — **{prob:.2f}** (Orta sağ qalma ehtimalı)")
     else:
-        st.error(f"🔴 Yüksək Risk — **{prob:.2f}**")
+        st.error(f"🔴 Yüksək Risk — **{prob:.2f}** (Aşağı sağ qalma ehtimalı)")
+
 
     st.write("---")
 
@@ -175,6 +218,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
 
