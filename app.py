@@ -150,8 +150,8 @@ with col1:
     )
 
 with col2:
-    user_input["Reginol Node Positive"] = st.number_input(
-        "Reginol Node Positive", 0, 30, default_values["rnp"]
+    user_input["Regional Node Positive"] = st.number_input(
+        "Regional Node Positive", 0, 30, default_values["rnp"]
     )
 
 with col1:
@@ -246,4 +246,5 @@ with st.expander("🧠 SHAP Summary Plot"):
 
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov · XGBoost · Explainable AI · 2025")
+
 
