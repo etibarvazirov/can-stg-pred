@@ -1,25 +1,44 @@
 import numpy as np
+import pandas as pd
 
 def preprocess_input(user_input, encoders, scaler):
-    # categorical
-    t_val = encoders["T Stage"].transform([user_input["T Stage"]])[0]
-    n_val = encoders["N Stage"].transform([user_input["N Stage"]])[0]
+    """
+    user_input: dict of raw form inputs
+    returns: numpy array shaped for model
+    """
 
-    # numeric
-    numeric_raw = np.array([
-        float(user_input["Tumor Size"]),
-        float(user_input["Reginol Node Positive"]),
-        float(user_input["Regional Node Examined"]),
-    ]).reshape(1, -1)
+    FEATURES = [
+        "Tumor Size",
+        "Reginol Node Positive",
+        "T Stage ",
+        "N Stage",
+        "differentiate",
+        "Grade",
+        "Estrogen Status",
+        "Progesterone Status",
+        "Race"
+    ]
 
-    numeric_scaled = scaler.transform(numeric_raw)[0]
+    row = []
 
-    row = np.array([
-        t_val,
-        n_val,
-        numeric_scaled[0],
-        numeric_scaled[1],
-        numeric_scaled[2]
-    ]).reshape(1, -1)
+    for feat in FEATURES:
+        val = user_input[feat]
 
-    return row
+        # Numerical
+        if feat in ["Tumor Size", "Reginol Node Positive"]:
+            row.append(float(val))
+
+        # Categorical
+        else:
+            le = encoders[feat]
+            row.append(le.transform([val])[0])
+
+    # Convert to DataFrame
+    df_row = pd.DataFrame([row], columns=FEATURES)
+
+    # Scale numeric only
+    df_row[["Tumor Size", "Reginol Node Positive"]] = scaler.transform(
+        df_row[["Tumor Size", "Reginol Node Positive"]]
+    )
+
+    return df_row.values
