@@ -153,10 +153,10 @@ if st.button("🔮 Proqnoz et"):
 st.markdown("---")
 
 with st.expander("📊 Confusion Matrix"):
-    st.image("images/confusion_matrix.png", width=520)
+    st.image("images/xgb_confusion_matrix.png", width=520)
 
 with st.expander("📈 ROC Curve"):
-    st.image("images/roc_curve.png", width=520)
+    st.image("images/xgb_roc_curve.png", width=520)
 
 with st.expander("📉 Calibration Curve"):
     st.image("images/calibration_curve.png", width=520)
@@ -173,3 +173,4 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
