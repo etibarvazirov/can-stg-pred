@@ -87,39 +87,58 @@ st.markdown("---")
 st.subheader("📥 Dəyərləri daxil edin")
 
 user_input = {}
-col1, col2 = st.columns(2)
 
-# NUMERICAL
-with col1:
-    user_input["Tumor Size"] = st.number_input("Tumor Size (mm)", 1, 200, 20)
+user_input["Tumor Size"] = st.number_input(
+    "Tumor Size (mm)", 
+    1, 200, 
+    key="tumor_size"
+)
 
-with col2:
-    user_input["Regional Node Positive"] = st.number_input("Positive Lymph Nodes", 0, 30, 0)
+user_input["Reginol Node Positive"] = st.number_input(
+    "Reginol Node Positive", 
+    0, 30, 
+    key="rnp"
+)
 
-# CATEGORICAL
-with col1:
-    user_input["T Stage"] = st.selectbox("T Stage", ["T1", "T2", "T3", "T4"])
+user_input["T Stage"] = st.selectbox(
+    "T Stage", 
+    ["T1", "T2", "T3", "T4"],
+    key="t_stage"
+)
 
-with col2:
-    user_input["N Stage"] = st.selectbox("N Stage", ["N1", "N2", "N3"])
+user_input["N Stage"] = st.selectbox(
+    "N Stage", 
+    ["N1", "N2", "N3"],
+    key="n_stage"
+)
 
-with col1:
-    user_input["differentiate"] = st.selectbox(
-        "Differentiate",
-        ["Poorly differentiated", "Moderately differentiated", "Well differentiated", "Undifferentiated"]
-    )
+user_input["differentiate"] = st.selectbox(
+    "Differentiate",
+    ["Poorly differentiated", "Moderately differentiated", 
+     "Well differentiated", "Undifferentiated"],
+    key="diff"
+)
 
-with col2:
-    user_input["Grade"] = st.selectbox("Grade", ["1", "2", "3", " anaplastic; Grade IV"])
+user_input["Grade"] = st.selectbox(
+    "Grade",
+    ["1", "2", "3", " anaplastic; Grade IV"],
+    key="grade"
+)
 
-with col1:
-    user_input["Estrogen Status"] = st.selectbox("Estrogen Status", ["Positive", "Negative"])
+user_input["Estrogen Status"] = st.selectbox(
+    "Estrogen Status", ["Positive", "Negative"],
+    key="er"
+)
 
-with col2:
-    user_input["Progesterone Status"] = st.selectbox("Progesterone Status", ["Positive", "Negative"])
+user_input["Progesterone Status"] = st.selectbox(
+    "Progesterone Status", ["Positive", "Negative"],
+    key="pr"
+)
 
-with col1:
-    user_input["Race"] = st.selectbox("Race", ["White", "Black", "Other"])
+user_input["Race"] = st.selectbox(
+    "Race", ["White", "Black", "Other"],
+    key="race"
+)
 
 
 # CLEAN KEYS → prevent KeyError
@@ -129,45 +148,44 @@ user_input = clean_input
 st.markdown("---")
 
 # Ready presets ----------------------------------------------
-
-st.subheader("📌 Hazır nümunələr (Test Presets)")
+st.subheader("📌 Hazır nümunələr (Presets)")
 
 colA, colB, colC = st.columns(3)
 
-if colA.button("🟢 Low Risk Preset"):
-    user_input["Tumor Size"] = 12
-    user_input["Reginol Node Positive"] = 0
-    user_input["T Stage"] = "T1"
-    user_input["N Stage"] = "N1"
-    user_input["differentiate"] = "Well differentiated"
-    user_input["Grade"] = "1"
-    user_input["Estrogen Status"] = "Positive"
-    user_input["Progesterone Status"] = "Positive"
-    user_input["Race"] = "White"
+if colA.button("🟢 Low Risk"):
+    st.session_state.tumor_size = 8
+    st.session_state.rnp = 0
+    st.session_state.t_stage = "T1"
+    st.session_state.n_stage = "N1"
+    st.session_state.diff = "Well differentiated"
+    st.session_state.grade = "1"
+    st.session_state.er = "Positive"
+    st.session_state.pr = "Positive"
+    st.session_state.race = "White"
     st.rerun()
 
-if colB.button("🟡 Medium Risk Preset"):
-    user_input["Tumor Size"] = 32
-    user_input["Reginol Node Positive"] = 3
-    user_input["T Stage"] = "T2"
-    user_input["N Stage"] = "N2"
-    user_input["differentiate"] = "Moderately differentiated"
-    user_input["Grade"] = "2"
-    user_input["Estrogen Status"] = "Positive"
-    user_input["Progesterone Status"] = "Negative"
-    user_input["Race"] = "Other"
+if colB.button("🟡 Medium Risk"):
+    st.session_state.tumor_size = 38
+    st.session_state.rnp = 4
+    st.session_state.t_stage = "T2"
+    st.session_state.n_stage = "N2"
+    st.session_state.diff = "Moderately differentiated"
+    st.session_state.grade = "2"
+    st.session_state.er = "Positive"
+    st.session_state.pr = "Negative"
+    st.session_state.race = "Other"
     st.rerun()
 
-if colC.button("🔴 High Risk Preset"):
-    user_input["Tumor Size"] = 78
-    user_input["Reginol Node Positive"] = 9
-    user_input["T Stage"] = "T3"
-    user_input["N Stage"] = "N3"
-    user_input["differentiate"] = "Poorly differentiated"
-    user_input["Grade"] = "3"
-    user_input["Estrogen Status"] = "Negative"
-    user_input["Progesterone Status"] = "Negative"
-    user_input["Race"] = "Black"
+if colC.button("🔴 High Risk"):
+    st.session_state.tumor_size = 90
+    st.session_state.rnp = 12
+    st.session_state.t_stage = "T3"
+    st.session_state.n_stage = "N3"
+    st.session_state.diff = "Poorly differentiated"
+    st.session_state.grade = "3"
+    st.session_state.er = "Negative"
+    st.session_state.pr = "Negative"
+    st.session_state.race = "Black"
     st.rerun()
 
 
@@ -218,6 +236,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
 
