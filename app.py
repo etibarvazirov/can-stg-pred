@@ -144,7 +144,7 @@ if colA.button("🟢 Low Risk Preset"):
     user_input["Estrogen Status"] = "Positive"
     user_input["Progesterone Status"] = "Positive"
     user_input["Race"] = "White"
-    st.experimental_rerun()
+    st.rerun()
 
 if colB.button("🟡 Medium Risk Preset"):
     user_input["Tumor Size"] = 32
@@ -156,7 +156,7 @@ if colB.button("🟡 Medium Risk Preset"):
     user_input["Estrogen Status"] = "Positive"
     user_input["Progesterone Status"] = "Negative"
     user_input["Race"] = "Other"
-    st.experimental_rerun()
+    st.rerun()
 
 if colC.button("🔴 High Risk Preset"):
     user_input["Tumor Size"] = 78
@@ -168,7 +168,7 @@ if colC.button("🔴 High Risk Preset"):
     user_input["Estrogen Status"] = "Negative"
     user_input["Progesterone Status"] = "Negative"
     user_input["Race"] = "Black"
-    st.experimental_rerun()
+    st.rerun()
 
 
 # -----------------------------------------------------------
@@ -218,6 +218,7 @@ with st.expander("🧠 SHAP Summary Plot"):
 # -----------------------------------------------------------
 st.markdown("---")
 st.caption("Developed by Etibar Vazirov — Calibrated ML · Clinical AI · 2025")
+
 
 
 
