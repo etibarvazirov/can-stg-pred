@@ -46,53 +46,55 @@ st.markdown("""
 # -----------------------------------------------------------
 # DESCRIPTION BOX
 # -----------------------------------------------------------
-st.markdown("""
-<div style="background-color:#F2FBF5; padding:16px; border-radius:10px;
-            border-left:4px solid #66C2A5; font-size:16px; margin-bottom:20px;">
 
-Bu tətbiq SEER döş xərçəngi məlumatları əsasında öyrədilmiş <b>XGBoost</b> modeli ilə 
-xəstənin <b>5 illik sağ qalma ehtimalını</b> proqnozlaşdırır. Model klinik və patoloji 
-göstəriciləri analiz edərək xəstəni 3 risk səviyyəsinə ayırır:
-
-<br><br>
-🟢 <b>Aşağı Risk</b> — ehtimal ≥ 0.87 (yüksək sağ qalma şansı)  
-🟡 <b>Orta Risk</b> — 0.70 < ehtimal &lt; 0.87  
-🔴 <b>Yüksək Risk</b> — ehtimal &lt; 0.70  
-
-<hr style="border: none; border-top: 1px solid #CEEAD6;">
-
-<h4 style="color:#0C513F;">📌 Modeldə istifadə edilən əsas klinik parametrlərin izahı</h4>
-
-<b>Tumor Size (Şişin Ölçüsü)</b>  
-Şişin millimetrlə ölçülən faktiki diametridir. Kiçik şişlər adətən daha yaxşı proqnozla əlaqəlidir.
-
-<b>Regional Node Positive (Müsbət Limfa Düyünləri)</b>  
-Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayıdır. Bu göstərici metastaz ehtimalının 
-əsas indikatorudur və sağ qalma proqnozuna birbaşa təsir edir.
-
-<b>T Stage</b>  
-Şişin ilkin ölçüsü və yaxın toxumalara yayılma dərəcəsini göstərir (T1 – kiçik, T3–T4 – irəli mərhələ).
-
-<b>N Stage</b>  
-Xəstəliyin limfa düyünlərinə nə qədər yayıldığını göstərir.  
-N1 minimal, N3 isə geniş yayılmanı göstərir.
-
-<b>Differentiate (Histoloji Differensiasiya)</b>  
-Şiş hüceyrələrinin normal hüceyrələrə nə qədər bənzədiyini göstərir.  
-“Poorly differentiated” daha aqressiv davranış deməkdir.
-
-<b>Grade</b>  
-Şişin aqressivlik dərəcəsidir. Grade 1 daha sakit, Grade 3 uyğun olmayan və sürətlə yayılan hüceyrələri göstərir.
-
-<b>Estrogen Status (ER)</b> və <b>Progesterone Status (PR)</b>  
-Hormon reseptor statusu. ER/PR pozitiv olan şişlər adətən daha yaxşı müalicə cavabı və 
-yüksək sağ qalma ehtimalı ilə əlaqələndirilir.
-
-<b>Race</b>  
-SEER datasına görə bəzi etnik qruplarda risk profilləri dəyişir və model bunu statistik olaraq nəzərə alır.
-
-</div>
-""", unsafe_allow_html=True)
+with st.expander("ℹ️ Layihə haqqında ətraflı məlumat"):
+    st.markdown("""
+    <div style="background-color:#F2FBF5; padding:16px; border-radius:10px;
+                border-left:4px solid #66C2A5; font-size:16px; margin-bottom:20px;">
+    
+    Bu tətbiq SEER döş xərçəngi məlumatları əsasında öyrədilmiş <b>XGBoost</b> modeli ilə 
+    xəstənin <b>5 illik sağ qalma ehtimalını</b> proqnozlaşdırır. Model klinik və patoloji 
+    göstəriciləri analiz edərək xəstəni 3 risk səviyyəsinə ayırır:
+    
+    <br><br>
+    🟢 <b>Aşağı Risk</b> — ehtimal ≥ 0.87 (yüksək sağ qalma şansı)  
+    🟡 <b>Orta Risk</b> — 0.70 < ehtimal &lt; 0.87  
+    🔴 <b>Yüksək Risk</b> — ehtimal &lt; 0.70  
+    
+    <hr style="border: none; border-top: 1px solid #CEEAD6;">
+    
+    <h4 style="color:#0C513F;">📌 Modeldə istifadə edilən əsas klinik parametrlərin izahı</h4>
+    
+    <b>Tumor Size (Şişin Ölçüsü)</b>  
+    Şişin millimetrlə ölçülən faktiki diametridir. Kiçik şişlər adətən daha yaxşı proqnozla əlaqəlidir.
+    
+    <b>Regional Node Positive (Müsbət Limfa Düyünləri)</b>  
+    Xərçəng hüceyrəsi tapılan limfa düyünlərinin sayıdır. Bu göstərici metastaz ehtimalının 
+    əsas indikatorudur və sağ qalma proqnozuna birbaşa təsir edir.
+    
+    <b>T Stage</b>  
+    Şişin ilkin ölçüsü və yaxın toxumalara yayılma dərəcəsini göstərir (T1 – kiçik, T3–T4 – irəli mərhələ).
+    
+    <b>N Stage</b>  
+    Xəstəliyin limfa düyünlərinə nə qədər yayıldığını göstərir.  
+    N1 minimal, N3 isə geniş yayılmanı göstərir.
+    
+    <b>Differentiate (Histoloji Differensiasiya)</b>  
+    Şiş hüceyrələrinin normal hüceyrələrə nə qədər bənzədiyini göstərir.  
+    “Poorly differentiated” daha aqressiv davranış deməkdir.
+    
+    <b>Grade</b>  
+    Şişin aqressivlik dərəcəsidir. Grade 1 daha sakit, Grade 3 uyğun olmayan və sürətlə yayılan hüceyrələri göstərir.
+    
+    <b>Estrogen Status (ER)</b> və <b>Progesterone Status (PR)</b>  
+    Hormon reseptor statusu. ER/PR pozitiv olan şişlər adətən daha yaxşı müalicə cavabı və 
+    yüksək sağ qalma ehtimalı ilə əlaqələndirilir.
+    
+    <b>Race</b>  
+    SEER datasına görə bəzi etnik qruplarda risk profilləri dəyişir və model bunu statistik olaraq nəzərə alır.
+    
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------
@@ -282,6 +284,7 @@ with st.expander("📉 ROC Curve"):
 
 st.markdown("---")
 st.caption("Developed by --- · XGBoost · Explainable AI · 2025")
+
 
 
 
