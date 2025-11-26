@@ -1,44 +1,52 @@
 import numpy as np
-import pandas as pd
 
-def preprocess_input(user_input, encoders, scaler):
-    """
-    user_input: dict of raw form inputs
-    returns: numpy array shaped for model
-    """
+# 9 feature model
+FEATURES = [
+    "Tumor Size",
+    "Regional Node Positive",
+    "T Stage",
+    "N Stage",
+    "differentiate",
+    "Grade",
+    "Estrogen Status",
+    "Progesterone Status",
+    "Race"
+]
 
-    FEATURES = [
-        "Tumor Size",
-        "Reginol Node Positive",
-        "T Stage ",
-        "N Stage",
-        "differentiate",
-        "Grade",
-        "Estrogen Status",
-        "Progesterone Status",
-        "Race"
-    ]
+
+def preprocess_input(data, encoders, scaler):
+    """
+    Converts raw user input into model-ready numerical vector.
+    
+    Steps:
+    1. Numeric features -> float
+    2. Categorical features -> LabelEncoder transform
+    3. StandardScaler normalization for numeric features
+    4. Return numpy array shaped (1, 9)
+    """
 
     row = []
 
+    # Numerical columns
+    num_cols = ["Tumor Size", "Regional Node Positive"]
+
+    # Categorical columns
+    cat_cols = [
+        "T Stage", "N Stage", "differentiate", "Grade",
+        "Estrogen Status", "Progesterone Status", "Race"
+    ]
+
+    # Build row in correct order
     for feat in FEATURES:
-        val = user_input[feat]
-
-        # Numerical
-        if feat in ["Tumor Size", "Reginol Node Positive"]:
-            row.append(float(val))
-
-        # Categorical
+        if feat in num_cols:
+            row.append(float(data[feat]))
         else:
-            le = encoders[feat]
-            row.append(le.transform([val])[0])
+            row.append(encoders[feat].transform([data[feat]])[0])
 
-    # Convert to DataFrame
-    df_row = pd.DataFrame([row], columns=FEATURES)
+    row = np.array(row).reshape(1, -1)
 
-    # Scale numeric only
-    df_row[["Tumor Size", "Reginol Node Positive"]] = scaler.transform(
-        df_row[["Tumor Size", "Reginol Node Positive"]]
-    )
+    # Scale numerical columns
+    idxs = [FEATURES.index(c) for c in num_cols]
+    row[:, idxs] = scaler.transform(row[:, idxs])
 
-    return df_row.values
+    return row
