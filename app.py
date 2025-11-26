@@ -1,48 +1,34 @@
 import streamlit as st
-import pickle
 import numpy as np
-import json
-
+import pickle
 from utils import preprocess_input
 
 # -----------------------------------------------------------
-# PAGE CONFIG
+# Load artifacts
 # -----------------------------------------------------------
-st.set_page_config(page_title="Breast Cancer Survival Prediction", page_icon="🩺")
-
-# -----------------------------------------------------------
-# LOAD ARTIFACTS
-# -----------------------------------------------------------
-with open("model.pkl", "rb") as f:
-    model = pickle.load(f)
-
-with open("scaler.pkl", "rb") as f:
-    scaler = pickle.load(f)
-
-with open("encoders.pkl", "rb") as f:
-    encoders = pickle.load(f)
-
-with open("feature_info.json", "r") as f:
-    INFO = json.load(f)
-
-FEATURES = INFO["features"]
-num_cols = INFO["num_cols"]
-cat_cols = INFO["cat_cols"]
-THRESHOLD = INFO["threshold"]   # Youden J optimal threshold
+model = pickle.load(open("xgb_model.pkl", "rb"))
+encoders = pickle.load(open("encoders.pkl", "rb"))
+scaler = pickle.load(open("scaler.pkl", "rb"))
 
 # -----------------------------------------------------------
-# HEADER (Medical Style)
+# Streamlit Page Config
+# -----------------------------------------------------------
+st.set_page_config(page_title="Breast Cancer Stage Prediction", page_icon="🩺")
+
+# -----------------------------------------------------------
+# HEADER (Pastel medical design)
 # -----------------------------------------------------------
 st.markdown("""
     <div style="
-        background-color:#D8F3DC;
+        background-color:#DFF5E3;
         padding:18px;
         border-radius:10px;
         text-align:center;
-        border:1px solid #95D5B2;
-        margin-bottom:15px;">
-        <h1 style="color:#1B4332; margin:0;">
-            🩺 Breast Cancer 5-Year Survival Prediction
+        border: 1px solid #B7E4C7;
+        margin-bottom: 15px;
+    ">
+        <h1 style="color:#0C513F; margin:0; font-size:26px;">
+            🩺 Breast Cancer Survival Prediction (XGBoost)
         </h1>
     </div>
 """, unsafe_allow_html=True)
@@ -51,39 +37,53 @@ st.markdown("""
 # DESCRIPTION
 # -----------------------------------------------------------
 st.markdown("""
-Bu tətbiq döş xərçəngi xəstələri üçün **5 illik sağ qalma ehtimalını** təxmin edir.
-Model XGBoost əsasında hazırlanmışdır və SEER klinik məlumatları üzərində öyrədilmişdir.
+<div style="
+    background-color:#F2FBF5;
+    padding:15px;
+    border-radius:10px;
+    border-left:4px solid #66C2A5;
+    font-size:16px;
+">
+Bu sistem SEER real dünyadakı klinik məlumatları əsasında qurulmuş
+<b>XGBoost</b> modelindən istifadə edərək xəstənin <b>yaşayıb-yaşamayacağını</b> proqnozlaşdırır.
 
-Sistem aşağıdakı ən vacib klinik göstəricilərdən istifadə edir:
-- **Yaş (Age)**
-- **Şişin ölçüsü (Tumor Size)**
-- **Limfa düyünləri (N Stage)**
-- **Hormon statusu (Estrogen / Progesterone)**
-- **Histoloji dərəcə (Grade)**
+Model yalnız ən vacib 5 klinik göstəricini istifadə edir:
+<ul>
+<li><b>T Stage</b></li>
+<li><b>N Stage</b></li>
+<li><b>Tumor Size</b></li>
+<li><b>Reginol Node Positive</b></li>
+<li><b>Regional Node Examined</b></li>
+</ul>
 
-Proqnoz:  
-**1 → Alive (yüksək sağ qalma ehtimalı)**  
-**0 → Dead (yüksək risk)**  
-""")
+Bu göstəricilər döş xərçənginin lokal və regional yayılmasını əks etdirir və xəstənin sağ qalma ehtimalı ilə sıx bağlıdır.
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
 # -----------------------------------------------------------
-# USER INPUTS
+# USER INPUT FORM
 # -----------------------------------------------------------
-st.subheader("📥 Xəstə məlumatlarını daxil edin")
+st.subheader("📥 Kliniki göstəriciləri daxil edin")
+
+col1, col2 = st.columns(2)
 
 user_input = {}
 
-for feat in FEATURES:
+with col1:
+    user_input["T Stage"] = st.selectbox("T Stage", ["T1", "T2", "T3", "T4"])
 
-    if feat in num_cols:
-        val = st.number_input(f"{feat}", value=0.0)
-        user_input[feat] = val
-    else:
-        options = list(encoders[feat].classes_)
-        val = st.selectbox(f"{feat}", options)
-        user_input[feat] = val
+with col2:
+    user_input["N Stage"] = st.selectbox("N Stage", ["N1", "N2", "N3"])
+
+with col1:
+    user_input["Tumor Size"] = st.number_input("Tumor Size (mm)", 1, 200)
+
+with col2:
+    user_input["Reginol Node Positive"] = st.number_input("Reginol Node Positive", 0, 30)
+
+user_input["Regional Node Examined"] = st.number_input("Regional Node Examined", 0, 60)
 
 st.markdown("---")
 
@@ -92,35 +92,38 @@ st.markdown("---")
 # -----------------------------------------------------------
 if st.button("🔮 Proqnoz et"):
 
-    X = preprocess_input(user_input, FEATURES, encoders, scaler, num_cols)
-    prob_alive = model.predict_proba(X)[0][1]
+    try:
+        X = preprocess_input(user_input, encoders, scaler)
+        prob_survival = model.predict_proba(X)[0][1]
 
-    pred = 1 if prob_alive >= THRESHOLD else 0
+        if prob_survival >= 0.5:
+            st.success(f"🎯 Xəstənin sağ qalma ehtimalı yüksəkdir: **{prob_survival:.2f}**")
+        else:
+            st.error(f"⚠️ Sağ qalma ehtimalı aşağıdır: **{prob_survival:.2f}**")
 
-    if pred == 1:
-        st.success(f"🌿 **Nəticə: Xəstənin sağ qalma ehtimalı yüksəkdir (Alive)**\n\nEhtimal: {prob_alive:.2f}")
-    else:
-        st.error(f"⚠️ **Nəticə: Yüksək risk (Dead)**\n\nSağ qalma ehtimalı: {prob_alive:.2f}")
+        st.write("### 🔍 Modelə daxil olan feature vektoru:")
+        st.write(X)
 
-    st.markdown("---")
-
-    # -----------------------------------------------------------
-    # FIGURES
-    # -----------------------------------------------------------
-    with st.expander("📊 Model Accuracy Comparison"):
-        st.image("images/model_cv_accuracy.png")
-
-    with st.expander("📉 Confusion Matrix (Optimized)"):
-        st.image("images/xgb_confusion_matrix.png")
-
-    with st.expander("📈 ROC Curve"):
-        st.image("images/xgb_roc_curve.png")
-
-    with st.expander("🧠 Feature Importance (Top-10)"):
-        st.image("images/xgb_feature_importance_top10.png")
-
-    with st.expander("🧬 SHAP Summary Plot"):
-        st.image("images/xgb_shap_summary.png")
+    except Exception as e:
+        st.error(f"Xəta baş verdi: {e}")
 
 st.markdown("---")
-st.caption("Developed by Etibar Vazirov · 2025 · Survival AI Model")
+
+# -----------------------------------------------------------
+# DIAGRAMS SECTION — Always visible
+# -----------------------------------------------------------
+with st.expander("📊 Model Performance (Confusion Matrix)"):
+    st.image("images/xgb_confusion_matrix.png", width=550)
+    st.write("Bu xəritə modelin düzgün və yanlış təsnifat etdiyi nümunələrin bölgüsünü göstərir.")
+
+with st.expander("📈 ROC Curve"):
+    st.image("images/xgb_roc_curve.png", width=550)
+    st.write("ROC əyrisi modelin müxtəlif threshold-larda ayrıcılıq gücünü göstərir.")
+
+with st.expander("📉 Feature Importance"):
+    st.image("images/xgb_feature_importance.png", width=550)
+    st.write("XGBoost modelinə ən çox təsir edən klinik göstəricilər.")
+
+st.markdown("---")
+
+st.caption("Developed by Etibar Vazirov · XGBoost · Explainable AI · 2025")
