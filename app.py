@@ -94,6 +94,7 @@ scaler = joblib.load("scaler.pkl")
 # -----------------------------------------------------------
 # INPUT FORM
 # -----------------------------------------------------------
+
 st.subheader("📥 Dəyərləri daxil edin")
 
 user_input = {}
@@ -108,28 +109,52 @@ with col2:
 
 # Categorical input
 with col1:
-    user_input["T Stage "] = st.selectbox("T Stage", ["T1", "T2", "T3", "T4"])
+    user_input["T Stage "] = st.selectbox(
+        "T Stage",
+        ["T1", "T2", "T3", "T4"]     # alphabetical — correct
+    )
 
 with col2:
-    user_input["N Stage"] = st.selectbox("N Stage", ["N1", "N2", "N3"])
+    user_input["N Stage"] = st.selectbox(
+        "N Stage",
+        ["N1", "N2", "N3"]          # alphabetical — correct
+    )
 
 with col1:
     user_input["differentiate"] = st.selectbox(
         "Differentiate",
-        ["Poorly differentiated", "Moderately differentiated", "Well differentiated", "Undifferentiated"]
+        [
+            "Moderately differentiated",
+            "Poorly differentiated",
+            "Undifferentiated",
+            "Well differentiated"
+        ]    # alphabetical — correct
     )
 
 with col2:
-    user_input["Grade"] = st.selectbox("Grade", ["1", "2", "3", " anaplastic; Grade IV"])
+    user_input["Grade"] = st.selectbox(
+        "Grade",
+        ["1", "2", "3", " anaplastic; Grade IV"]   # alphabetical — correct
+    )
 
 with col1:
-    user_input["Estrogen Status"] = st.selectbox("Estrogen Status", ["Positive", "Negative"])
+    user_input["Estrogen Status"] = st.selectbox(
+        "Estrogen Status",
+        ["Negative", "Positive"]   # alphabetical — correct
+    )
 
 with col2:
-    user_input["Progesterone Status"] = st.selectbox("Progesterone Status", ["Positive", "Negative"])
+    user_input["Progesterone Status"] = st.selectbox(
+        "Progesterone Status",
+        ["Negative", "Positive"]   # alphabetical — correct
+    )
 
 with col1:
-    user_input["Race"] = st.selectbox("Race", ["White", "Black", "Other"])
+    user_input["Race"] = st.selectbox(
+        "Race",
+        ["Black", "Other", "White"]   # alphabetical — correct
+    )
+
 
 
 st.markdown("---")
@@ -142,9 +167,9 @@ if st.button("🔮 Proqnoz et"):
     X = preprocess_input(user_input, encoders, scaler)
     prob = model.predict_proba(X)[0][1]
 
-    if prob >= 0.90:
+    if prob >= 0.97:
         st.success(f"🟢 Yüksək sağ qalma ehtimalı — **{prob:.2f}**")
-    elif prob >= 0.60:
+    elif prob >= 0.80:
         st.warning(f"🟡 Orta sağ qalma ehtimalı — **{prob:.2f}**")
     else:
         st.error(f"🔴 Aşağı sağ qalma ehtimalı — **{prob:.2f}**")
@@ -166,5 +191,6 @@ with st.expander("🧠 SHAP Summary Plot"):
 
 st.markdown("---")
 st.caption("Developed by ________ · XGBoost · Explainable AI · 2025")
+
 
 
