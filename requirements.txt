@@ -7,5 +7,7 @@ shap
 matplotlib
 seaborn
 joblib
+torch
+
 
 
