@@ -35,9 +35,11 @@ if "preset" not in st.session_state:
 # HEADER
 # -----------------------------------------------------------
 st.markdown("""
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+    </style>
 <div style="background-color:#DFF5E3; padding:18px; border-radius:10px; 
             text-align:center; border:1px solid #B7E4C7; margin-bottom:15px;">
     <h1 style="color:#0C513F; margin:0; font-size:26px;">
@@ -291,6 +293,7 @@ with st.expander("📉 ROC Curve"):
 
 st.markdown("---")
 st.caption("Developed by Toghrul & Harun · XGBoost · Explainable AI · 2025")
+
 
 
 
